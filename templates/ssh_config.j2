@@ -1,0 +1,10 @@
+## {{ ansible_managed }}
+{% for host_config in ssh_config %}
+Host {{host_config.host}}
+{% for key, value in host_config|dictsort %}
+{% if key|lower != "host" %}
+    {{key}} {{value}}
+{% endif %}
+{% endfor %}
+
+{% endfor %}

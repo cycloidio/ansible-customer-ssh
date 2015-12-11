@@ -1,0 +1,51 @@
+---
+- name: "Create pre-home directory"
+  file: path="{{ home_directory }}" state=directory mode=0755 recurse=yes
+
+- name: "Create forward user with uid"
+  user: name="{{ user }}"
+        shell=/bin/bash
+        state=present
+        home="{{ home_directory }}"
+        uid="{{ user_uid }}"
+        non_unique=yes
+  when: user_uid
+
+- name: "Create forward user"
+  user: name="{{ user }}"
+        shell=/bin/bash
+        state=present
+        home="{{ home_directory }}"
+  when: not user_uid
+
+- name: "Create home directory"
+  file: path="{{ home_directory }}" owner={{ user}} group={{ user }} state=directory mode=0755 recurse=yes
+
+- name: "Install user ssh keys"
+  authorized_key: user="{{ user }}" key="{{ lookup('file', item) }}" state=present manage_dir=yes
+  become: true
+  become_user: "{{ user }}"
+  with_fileglob:
+    - "ssh/{{ user }}/*.pub"
+
+- name: "Install deploy private key"
+  copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy" mode=0600
+  become: true
+  become_user: "{{ user }}"
+  with_fileglob:
+    - "ssh/{{ user }}/deploy"
+
+- name: "Install deploy public key"
+  copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy.pub" mode=0644
+  become: true
+  become_user: "{{ user }}"
+  with_fileglob:
+    - "ssh/{{ user }}/deploy.pub"
+
+- name: "Configure SSH for user"
+  template:
+    src: "ssh_config.j2"
+    dest: "{{ home_directory }}/.ssh/config"
+    mode: 0644
+  become: true
+  become_user: "{{ user }}"

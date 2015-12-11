@@ -1,0 +1,8 @@
+---
+home_directory: /home/admin/
+user_uid: false
+ssh_config:
+  - host: "*"
+    StrictHostKeyChecking: "no"
+    IdentityFile: "~/.ssh/deploy"
+    IdentitiesOnly: "yes"
