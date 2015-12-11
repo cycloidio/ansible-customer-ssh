@@ -26,21 +26,21 @@
   become: true
   become_user: "{{ user }}"
   with_fileglob:
-    - "ssh/{{ user }}/*.pub"
+    - "/home/admin/{{ customer }}/ssh/{{ user }}/*.pub"
 
 - name: "Install deploy private key"
   copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy" mode=0600
   become: true
   become_user: "{{ user }}"
   with_fileglob:
-    - "ssh/{{ user }}/deploy"
+    - "/home/admin/{{ customer }}/ssh/{{ user }}/deploy"
 
 - name: "Install deploy public key"
   copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy.pub" mode=0644
   become: true
   become_user: "{{ user }}"
   with_fileglob:
-    - "ssh/{{ user }}/deploy.pub"
+    - "/home/admin/{{ customer }}/ssh/{{ user }}/deploy.pub"
 
 - name: "Configure SSH for user"
   template:
