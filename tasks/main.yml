@@ -19,7 +19,10 @@
   when: not user_uid
 
 - name: "Create home directory"
-  file: path="{{ home_directory }}" owner={{ user}} group={{ user }} state=directory mode=0755 recurse=yes
+  file: path="{{ home_directory }}" owner={{ user }} group={{ user }} state=directory mode=0755 recurse=yes
+
+- name: "Create .ssh directory"
+  file: path="{{ home_directory }}/.ssh" owner={{ user }} group={{ user }} state=directory mode=0700
 
 - name: "Install user ssh keys"
   authorized_key: user="{{ user }}" key="{{ lookup('file', item) }}" state=present manage_dir=yes
