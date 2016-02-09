@@ -1,3 +1,5 @@
 - hosts: all
   roles:
-    - ansible-customer-ssh
+    - role: ansible-customer-ssh
+      user: foo
+      customer: bar
