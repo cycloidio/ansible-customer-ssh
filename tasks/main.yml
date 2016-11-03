@@ -1,6 +1,6 @@
 ---
 - name: "Create pre-home directory"
-  file: path="{{ home_directory }}" state=directory mode=0755 recurse=yes
+  file: path="{{ home_directory }}" state=directory mode=0755
 
 - name: "Create forward user with uid"
   user: name="{{ user }}"
@@ -19,7 +19,7 @@
   when: not user_uid
 
 - name: "Create home directory"
-  file: path="{{ home_directory }}" owner={{ user }} group={{ user }} state=directory mode=0755 recurse=yes
+  file: path="{{ home_directory }}" owner={{ user }} group={{ user }} state=directory mode=0755
 
 - name: "Create .ssh directory"
   file: path="{{ home_directory }}/.ssh" owner={{ user }} group={{ user }} state=directory mode=0700
