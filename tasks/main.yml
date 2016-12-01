@@ -55,7 +55,7 @@
 
 - name: Make sure history size is not localy declared in .bashrc
   lineinfile:
-    dest: "/home/{{ home_directory }}/.bashrc"
+    dest: "{{ home_directory }}/.bashrc"
     regexp: "^{{ item }}.*"
     line: "#{{ item }}"
   with_items:
