@@ -57,7 +57,7 @@
   lineinfile:
     dest: "{{ home_directory }}/.bashrc"
     regexp: "^{{ item }}.*"
-    line: "#{{ item }}"
+    state: absent
   with_items:
      - "HISTSIZE="
      - "HISTFILESIZE="
