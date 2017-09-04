@@ -9,6 +9,7 @@
         home="{{ home_directory }}"
         uid="{{ user_uid }}"
         non_unique=yes
+        skeleton=/etc/skel
   when: user_uid
 
 - name: "Create forward user"
