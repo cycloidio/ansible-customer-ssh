@@ -30,7 +30,7 @@
   become: true
   become_user: "{{ user }}"
   with_fileglob:
-    - "/home/admin/{{ customer }}/files/ssh/{{ user }}/*.pub"
+    - "{{ ssh_fileglob_path }}/files/ssh/{{ user }}/*.pub"
 
 - name: "Install deploy private key"
   copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy" mode=0600

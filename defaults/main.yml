@@ -1,6 +1,8 @@
 ---
 home_directory: /home/admin/
 user_uid: false
+ssh_fileglob_path: "/home/admin/{{ customer }}"
+
 ssh_config:
   - host: "*"
     StrictHostKeyChecking: "no"
