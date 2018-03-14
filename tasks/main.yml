@@ -1,50 +1,81 @@
 ---
 - name: "Create pre-home directory"
-  file: path="{{ home_directory }}" state=directory mode=0755
+  file:
+    path: "{{ home_directory }}"
+    state: directory
+    mode: 0755
 
 - name: "Create forward user with uid"
-  user: name="{{ user }}"
-        shell=/bin/bash
-        state=present
-        home="{{ home_directory }}"
-        uid="{{ user_uid }}"
-        non_unique=yes
-        skeleton=/etc/skel
+  user:
+    name: "{{ user }}"
+    shell: /bin/bash
+    state: present
+    home: "{{ home_directory }}"
+    uid: "{{ user_uid }}"
+    non_unique: yes
+    skeleton: /etc/skel
   when: user_uid
 
 - name: "Create forward user"
-  user: name="{{ user }}"
-        shell=/bin/bash
-        state=present
-        home="{{ home_directory }}"
+  user:
+    name: "{{ user }}"
+    shell: /bin/bash
+    state: present
+    home: "{{ home_directory }}"
   when: not user_uid
 
 - name: "Create home directory"
-  file: path="{{ home_directory }}" owner={{ user }} group={{ user }} state=directory mode=0755
+  file:
+    path: "{{ home_directory }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    state: directory
+    mode: 0755
 
 - name: "Create .ssh directory"
-  file: path="{{ home_directory }}/.ssh" owner={{ user }} group={{ user }} state=directory mode=0700
+  file:
+    path: "{{ home_directory }}/.ssh"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    state: directory
+    mode: 0700
 
-- name: "Install user ssh keys"
-  authorized_key: user="{{ user }}" key="{{ lookup('file', item) }}" state=present manage_dir=yes
-  become: true
-  become_user: "{{ user }}"
+- name: "Install user ssh keys *.pub"
+  authorized_key:
+    user: "{{ user }}"
+    key: "{{ lookup('file', item) }}"
+    state: present
+    manage_dir: yes
   with_fileglob:
     - "{{ ssh_fileglob_path }}/files/ssh/{{ user }}/*.pub"
+    - "{{ playbook_dir }}/files/ssh/{{ user }}/*.pub"
+    - "files/ssh/{{ user }}/*.pub"
 
 - name: "Install deploy private key"
-  copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy" mode=0600
-  become: true
-  become_user: "{{ user }}"
-  with_fileglob:
-    - "/home/admin/{{ customer }}/files/ssh/{{ user }}/deploy"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ home_directory }}/.ssh/deploy"
+    owner: "{{ user }}"
+    mode: 0600
+  with_first_found:
+    - files:
+        - "{{ ssh_fileglob_path }}/files/ssh/{{ user }}/deploy"
+        - "{{ playbook_dir }}/files/ssh/{{ user }}/deploy"
+        - "files/ssh/{{ user }}/deploy"
+      skip: true
 
 - name: "Install deploy public key"
-  copy: src={{ item }} dest="{{ home_directory }}/.ssh/deploy.pub" mode=0644
-  become: true
-  become_user: "{{ user }}"
-  with_fileglob:
-    - "/home/admin/{{ customer }}/files/ssh/{{ user }}/deploy.pub"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ home_directory }}/.ssh/deploy.pub"
+    owner: "{{ user }}"
+    mode: 0644
+  with_first_found:
+    - files:
+        - "{{ ssh_fileglob_path }}/files/ssh/{{ user }}/deploy.pub"
+        - "{{ playbook_dir }}/files/ssh/{{ user }}/deploy.pub"
+        - "files/ssh/{{ user }}/deploy.pub"
+      skip: true
 
 - name: "Configure SSH for user"
   template:
