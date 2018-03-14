@@ -49,10 +49,9 @@
 - name: "Configure SSH for user"
   template:
     src: "ssh_config.j2"
+    owner: "{{ user }}"
     dest: "{{ home_directory }}/.ssh/config"
     mode: 0644
-  become: true
-  become_user: "{{ user }}"
 
 - name: Make sure history size is not localy declared in .bashrc
   lineinfile:
