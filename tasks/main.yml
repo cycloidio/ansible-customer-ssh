@@ -51,6 +51,12 @@
     - "{{ playbook_dir }}/files/ssh/{{ user }}/*.pub"
     - "files/ssh/{{ user }}/*.pub"
 
+- name: Set authorized_keys file
+  copy:
+    content: "{{ ssh_authorized_keys }}"
+    dest: "{{ home_directory }}/.ssh/authorized_keys"
+  when: ssh_authorized_keys != ""
+
 - name: "Install deploy private key"
   copy:
     src: "{{ item }}"
