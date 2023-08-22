@@ -1,7 +1,11 @@
 ---
 home_directory: /home/admin/
 user_uid: false
+# By default key authorized key from files
 ssh_fileglob_path: "/home/admin/{{ customer }}"
+# If defined, get authorized key from variable.
+# /!\ All keys will be replaced
+ssh_authorized_keys: ""
 
 ssh_config:
   - host: "*"
